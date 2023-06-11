@@ -3,8 +3,8 @@ import { useEffect, useState } from 'react';
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from '../firebase-config'; 
 import { ShopContextProvider } from "../context/shop-context"
-import Navbar from '../components/Navbar';
-import NoteBar from '../components/NoteBar';
+import Navbar from 'src/components/Navbar'
+import NoteBar from 'src/components/NoteBar'
 
 
 export default function App({ Component, pageProps }) {
