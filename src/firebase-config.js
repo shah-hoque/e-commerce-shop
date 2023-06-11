@@ -3,13 +3,13 @@ import { getFirestore } from "firebase/firestore";
 import { getAuth, GoogleAuthProvider, setPersistence, browserLocalPersistence, signInWithPopup, signOut } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyB_whfmAxR53nraLo0yXf5Pt-gIbi_Bajk",
-  authDomain: "project32sh.firebaseapp.com",
-  projectId: "project32sh",
-  storageBucket: "project32sh.appspot.com",
-  messagingSenderId: "571577032241",
-  appId: "1:571577032241:web:c1a4a922990c737ca23f10"
-};
+    apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+    authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+    projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+    storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+    appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID
+  };
 
 // initialize Firebase application with the provided config
 const app = initializeApp(firebaseConfig);
