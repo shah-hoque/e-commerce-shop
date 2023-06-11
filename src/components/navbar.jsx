@@ -5,13 +5,12 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ShoppingBag, House } from "phosphor-react";
 import styles from '../components/navbar.module.css';
-import GoogleLogo from '../assets/other/google-logo.png'; 
 
 // sign in with Google component
 const SignInButton = () => {
   return (
     <button className="bg-gray-200 text-black-800 px-3 py-1 rounded flex items-center" style={{ width: '80%', height: '80%' }} onClick={signInWithGoogle}>
-      <Image src={GoogleLogo} alt="Google Logo" className="h-5 w-5 scale-95 mr-2" />Sign in</button>
+      <Image src="/other/google-logo.png" alt="Google Logo" className="h-5 w-5 scale-95 mr-2" />Sign in</button>
   );
 };
 

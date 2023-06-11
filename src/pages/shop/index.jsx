@@ -4,7 +4,6 @@ import { ShopContext } from "../../context/shop-context"
 import React, { useContext } from "react";
 import styles from '../shop/shop.module.css';
 import Image from 'next/image';
-import heroBanner from '../../assets/other/own-img.jpg'; 
 
 
 // component renders to show hero banner and shop
@@ -15,7 +14,7 @@ export default function Shop() {
 
       <div className={styles.heroBanner}>
         <Image 
-          src={heroBanner} 
+          src="/other/own-img.jpg"
           alt="Hero Banner"
           width={2000}
           height={200}
