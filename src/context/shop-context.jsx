@@ -18,28 +18,25 @@ const getDefaultCart = () => {
 // provides all state and funcs about shopping bag to ShopContext
 export const ShopContextProvider = ({ user, children }) => {
   const [cartItems, setCartItems] = useState(getDefaultCart());
+  const [cartLoaded, setCartLoaded] = useState(false);
   const cartItemsRef = useRef(cartItems); // a ref to hold the cartItems state
-  const saveTimeoutRef = useRef(); // ref to hold the timeout for saving cart
+  const saveTimeoutRef = useRef(); // ref to hold the timeout for saving bag
 
   // updates the ref when cartItems state changes or the user prop changes. Saves cart to Firestore db
   useEffect(() => {
     cartItemsRef.current = cartItems;
 
-    if (user) {
-      // if user is logged in, save cart to Firestore db when cartItems changes
-      // debounce the save to ensure that cartItemsRef is updated before saving to Firestore db
-      clearTimeout(saveTimeoutRef.current); // clear any existing timeout
+    if (user && cartLoaded) {
+      clearTimeout(saveTimeoutRef.current);
       saveTimeoutRef.current = setTimeout(async () => {
-        // save the cart to Firestore db
         await setDoc(doc(db, 'shoppingLists', user.uid), {
           cart: cartItemsRef.current,
         });
-      }, 200); // wait 200ms before saving to Firestore db
+      }, 200);
     }
-    
-    // clean up the effect by clearing the timeout.
+
     return () => clearTimeout(saveTimeoutRef.current);
-  }, [cartItems, user]);
+  }, [cartItems, user, cartLoaded]);
 
 
   // load cart from Firestore db when user logs in
@@ -51,24 +48,23 @@ export const ShopContextProvider = ({ user, children }) => {
         // get the actual doc
         const docSnap = await getDoc(docRef);
 
-        // if the doc exists, then we merge the cart from Firestore db with the local cart
         if (docSnap.exists()) {
           let serverCart = docSnap.data().cart;
-          let localCart = cartItemsRef.current; // use the ref instead of the state
-          let mergedCart = {...localCart}; // start with a copy of the local cart
-
+          let localCart = cartItemsRef.current;
+          let mergedCart = {...localCart};
+          
           // merge the server cart into the merged cart
           for(let item in serverCart){
             if(mergedCart[item]){
-              // if item exists in local cart, add the server quantity to it
               mergedCart[item] += serverCart[item];
             } else {
-              // if item does not exist in local cart, set it to the server quantity
               mergedCart[item] = serverCart[item];
             }
           }
 
           setCartItems(mergedCart);
+          // set to true after cart is loaded from Firestore (db)
+          setCartLoaded(true);
         } else {
           setCartItems(getDefaultCart());
         }
@@ -77,21 +73,20 @@ export const ShopContextProvider = ({ user, children }) => {
     }
   }, [user]);
 
-
-// calculate the total price of items in the cart
+  // calculate the total price of items in the cart
   const getTotalCartAmount = () => {
     let totalAmount = 0;
     for (const item in cartItems) {
-        if (cartItems[item] > 0) {
-          // find the matching product in the PRODUCTS array by its id
-            let itemInfo = PRODUCTS.find(product => product.id === Number(item));
-            totalAmount += cartItems[item] * itemInfo.price
-        }
+      if (cartItems[item] > 0) {
+        // find the matching product in the PRODUCTS array by its id	
+        let itemInfo = PRODUCTS.find(product => product.id === Number(item));
+        totalAmount += cartItems[item] * itemInfo.price
+      }
     }
     return totalAmount;
   }
 
-  // func increases the quantity of a product in the cart by one
+  // func decreases the quantity of a product in the cart by one
   const addToCart = (itemID) => {
     setCartItems((prev) => ({...prev, [itemID]: prev[itemID] + 1 }))
   };
@@ -101,12 +96,12 @@ export const ShopContextProvider = ({ user, children }) => {
     setCartItems((prev) => ({...prev, [itemID]: prev[itemID] - 1 }))
   };
 
-  // func removes all quantities of a product from the cart
+  // func removes all quantities of a product from the cart	
   const removeAllFromCart = (itemID) => {
     setCartItems((prev) => ({...prev, [itemID]: 0 }))
   };
 
-  // func resets the entire cart to the default state
+  // func resets the entire cart to the default state	
   const clearCart = () => {
     setCartItems(getDefaultCart());
   };

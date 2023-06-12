@@ -13,13 +13,7 @@ export default function Shop() {
     <div className={styles.shop}>
 
       <div className={styles.heroBanner}>
-        <Image 
-          src="/other/own-img.jpg"
-          alt="Hero Banner"
-          width={2000}
-          height={200}
-          priority
-        />
+
 
       <div className="absolute inset-0 flex flex-col items-center justify-between">
         <div className="flex-grow" />
